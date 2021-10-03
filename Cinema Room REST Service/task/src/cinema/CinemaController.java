@@ -4,11 +4,31 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static cinema.Cinema.getAllSeats;
+
+class Token {
+    UUID token;
+
+    public Token() {
+    }
+
+    public Token(UUID token) {
+        this.token = token;
+    }
+
+    public UUID getToken() {
+        return token;
+    }
+
+    public void setToken(UUID token) {
+        this.token = token;
+    }
+}
 
 @RestController
 public class CinemaController {
@@ -57,23 +77,23 @@ public class CinemaController {
         return new ResponseEntity<>(Map.of("error", "Wrong token!"), HttpStatus.BAD_REQUEST);
     }
 
-}
 
-class Token {
-    UUID token;
-
-    public Token() {
-    }
-
-    public Token(UUID token) {
-        this.token = token;
-    }
-
-    public UUID getToken() {
-        return token;
-    }
-
-    public void setToken(UUID token) {
-        this.token = token;
+    @PostMapping("/stats")
+    public ResponseEntity<?> stats(@RequestParam(required = false) String password) {
+        if (password != null && password.equals("super_secret")) {
+            Map<String, Integer> statistic = new HashMap<>();
+            int currentIncome = 0;
+            for (OrderedSeat orderedSeat : cinema.getOrderedSeats()) {
+                currentIncome += orderedSeat.getTicket().getPrice();
+            }
+            int numberOfAvailableSeats = cinema.getAvailable_seats().size();
+            int numberOfPurchasedTickets = cinema.getOrderedSeats().size();
+            statistic.put("current_income", currentIncome);
+            statistic.put("number_of_available_seats", numberOfAvailableSeats);
+            statistic.put("number_of_purchased_tickets", numberOfPurchasedTickets);
+            return new ResponseEntity<>(statistic, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(Map.of("error", "The password is wrong!"), HttpStatus.valueOf(401));
+        }
     }
 }
