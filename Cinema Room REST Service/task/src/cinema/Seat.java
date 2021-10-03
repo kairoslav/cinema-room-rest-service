@@ -5,6 +5,9 @@ public class Seat {
     private int column;
     private int price;
 
+    public Seat() {
+    }
+
     public Seat(int row, int column) {
         this.row = row;
         this.column = column;
