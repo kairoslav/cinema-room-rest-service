@@ -3,15 +3,26 @@ package cinema;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Seats {
-    public int total_rows;
-    public int total_columns;
-    public List<Seat> available_seats;
 
-    public Seats(int total_rows, int total_columns, List<Seat> available_seats) {
+public class Cinema {
+    private int total_rows;
+    private int total_columns;
+    private List<Seat> available_seats;
+
+    public Cinema(int total_rows, int total_columns, List<Seat> available_seats) {
         this.total_rows = total_rows;
         this.total_columns = total_columns;
         this.available_seats = available_seats;
+    }
+
+    public static Cinema getAllSeats(int rows, int columns) {
+        List<Seat> seats = new ArrayList<>();
+        for (int row = 1; row <= rows; row++) {
+            for (int column = 1; column <= columns; column++) {
+                seats.add(new Seat(row, column));
+            }
+        }
+        return new Cinema(rows, columns, seats);
     }
 
 
